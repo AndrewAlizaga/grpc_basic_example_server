@@ -2,21 +2,69 @@ package account
 
 import (
 	"context"
+	"errors"
 	"log"
 
+	accountasvc1 "github.com/AndrewAlizaga/grpc_basic_example_proto/pkg/proto/v1/account"
 	accountapiv1 "github.com/AndrewAlizaga/grpc_basic_example_proto/pkg/proto/v1/services/account"
+	uuid "github.com/satori/go.uuid"
 )
 
-// AccountServer ...
-type AccountServer struct{}
+// AccountsServer ...
+type AccountsServer struct{}
 
-
-func (AccountServer) LoginService(ctx context.Context, in *accountapiv1.LoginRequest) (*accountapiv1.LoginResponse, error) {
-	log.Println("INVOKE - LoginService")
-	return nil, nil
+var Accounts []*accountasvc1.Account = []*accountasvc1.Account{
+	{
+		Id:    uuid.NewV4().String(),
+		Name:  "Jose",
+		Email: "jose1@gmail.com",
+	},
+	{
+		Id:    uuid.NewV4().String(),
+		Name:  "Max",
+		Email: "max1@gmail.com",
+	},
+	{
+		Id:    uuid.NewV4().String(),
+		Name:  "Dayana",
+		Email: "dayana1@gmail.com",
+	},
 }
 
-func (AccountServer) SignUpService(ctx context.Context, in *accountapiv1.SignUpRequest) (*accountapiv1.SignUpResponse, error) {
+func (AccountsServer) LoginService(ctx context.Context, in *accountapiv1.LoginRequest) (*accountapiv1.LoginResponse, error) {
+	log.Println("INVOKE - LoginService")
+
+	var response accountapiv1.LoginResponse
+	var err error
+
+	for _, account := range Accounts {
+		if account.GetEmail() == in.GetEmail() {
+			if account.GetPassword() == in.GetPassword() {
+				response.Account = account
+				response.Jwt = uuid.NewV4().String()
+			} else {
+				response.Error = "bad email / password"
+				err = errors.New(response.Error)
+			}
+		}
+	}
+
+	return &response, err
+}
+
+func (AccountsServer) SignUpService(ctx context.Context, in *accountapiv1.SignUpRequest) (*accountapiv1.SignUpResponse, error) {
 	log.Println("INVOKE - SignUpService")
-	return nil, nil
+
+	var response accountapiv1.SignUpResponse
+	var err error
+
+	if in.GetAccount() != nil && in.GetAccount().GetEmail() != "" && in.GetAccount().GetName() != "" && in.GetAccount().GetPassword() != "" {
+		Accounts = append(Accounts, in.GetAccount())
+		response.Jwt = uuid.NewV4().String()
+	} else {
+		response.Error = "bad formed request"
+		err = errors.New(response.Error)
+	}
+
+	return &response, err
 }

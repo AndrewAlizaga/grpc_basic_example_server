@@ -21,7 +21,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	//register out grpc methods into the server
-	accountapiv1.RegisterAccountServiceServer(grpcServer, &accountsvc1.AccountServer{})
+	accountapiv1.RegisterAccountServiceServer(grpcServer, &accountsvc1.AccountsServer{})
 
 	log.Println("Server running on port 8080")
 
