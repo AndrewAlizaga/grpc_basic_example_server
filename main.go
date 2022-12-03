@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 
@@ -11,10 +12,11 @@ import (
 
 func main() {
 
+
 	//create listener on TCP port
 	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
-		log.Fatalf("error using tpc port 8080: ", err.Error())
+		log.Fatalf(fmt.Sprintf("error using tpc port 8080: %s", err.Error()))
 	}
 
 	// create gRPC server object

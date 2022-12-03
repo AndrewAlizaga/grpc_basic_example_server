@@ -15,19 +15,22 @@ type AccountsServer struct{}
 
 var Accounts []*accountasvc1.Account = []*accountasvc1.Account{
 	{
-		Id:    uuid.NewV4().String(),
-		Name:  "Jose",
-		Email: "jose1@gmail.com",
+		Id:       uuid.NewV4().String(),
+		Name:     "Jos",
+		Email:    "jos1@gmail.com",
+		Password: "qwerty",
 	},
 	{
-		Id:    uuid.NewV4().String(),
-		Name:  "Max",
-		Email: "max1@gmail.com",
+		Id:       uuid.NewV4().String(),
+		Name:     "Max",
+		Email:    "max1@gmail.com",
+		Password: "qwerty",
 	},
 	{
-		Id:    uuid.NewV4().String(),
-		Name:  "Dayana",
-		Email: "dayana1@gmail.com",
+		Id:       uuid.NewV4().String(),
+		Name:     "Day",
+		Email:    "day1@gmail.com",
+		Password: "qwerty",
 	},
 }
 
@@ -42,11 +45,13 @@ func (AccountsServer) LoginService(ctx context.Context, in *accountapiv1.LoginRe
 			if account.GetPassword() == in.GetPassword() {
 				response.Account = account
 				response.Jwt = uuid.NewV4().String()
-			} else {
-				response.Error = "bad email / password"
-				err = errors.New(response.Error)
 			}
 		}
+	}
+
+	if response.GetAccount() == nil {
+		response.Error = "bad email / password"
+		err = errors.New(response.Error)
 	}
 
 	return &response, err
