@@ -41,11 +41,9 @@ func (AccountsServer) LoginService(ctx context.Context, in *accountapiv1.LoginRe
 	var err error
 
 	for _, account := range Accounts {
-		if account.GetEmail() == in.GetEmail() {
-			if account.GetPassword() == in.GetPassword() {
-				response.Account = account
-				response.Jwt = uuid.NewV4().String()
-			}
+		if account.GetEmail() == in.GetEmail() && account.GetPassword() == in.GetPassword() {
+			response.Account = account
+			response.Jwt = uuid.NewV4().String()
 		}
 	}
 
